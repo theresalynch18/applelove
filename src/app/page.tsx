@@ -6,24 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Search,
-  Heart,
-  User,
   ChevronRight,
   Truck,
   Shield,
@@ -35,16 +17,15 @@ import {
   Users,
   Zap,
   Send,
-  ChevronDown,
-  Menu,
 } from "lucide-react";
-import { products, categories, getRecommendedProducts, getBestsellers } from "@/lib/products";
+import { categories, getRecommendedProducts, getBestsellers } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import type { Product } from "@/lib/products";
-import { CartButton } from "@/components/cart-button";
 import { SafeImage } from "@/components/safe-image";
 import { useCart } from "@/context/cart-context";
 import { storeInfo, storeLegalLine } from "@/lib/store-info";
+import { SiteHeader } from "@/components/site-header";
+import { brandLetter, brandName } from "@/lib/brand";
 
 function useScrollAnimation() {
   const ref = useRef<HTMLDivElement>(null);
@@ -89,169 +70,18 @@ function AnimatedSection({ children, className = "", delay = 0 }: { children: Re
 }
 
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const { addToCart } = useCart();
 
   const handleAddToCart = (product: Product) => {
     addToCart(product, 1);
   };
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.brand.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const recommended = getRecommendedProducts();
   const bestsellers = getBestsellers();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 bg-grid">
-      {/* Top bar - hidden on mobile */}
-      <div className="hidden md:block border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-4 text-gray-600">
-            <span>Бесплатная доставка от 5 000 ₽</span>
-            <span className="text-gray-300">·</span>
-            <span>Гарантия 12 мес.</span>
-            <span className="text-gray-300">·</span>
-            <span>г. Ярославль</span>
-          </div>
-          <div className="flex items-center gap-6 text-gray-600">
-            <Link href="/delivery" className="hover:text-blue-600 transition-colors">Доставка</Link>
-            <Link href="/warranty" className="hover:text-blue-600 transition-colors">Гарантия</Link>
-            <Link href="/contacts" className="hover:text-blue-600 transition-colors">Контакты</Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-xl shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* Mobile menu button */}
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <button type="button" className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all">
-                  <Menu className="w-6 h-6" />
-                </button>
-              </SheetTrigger>
-              <SheetContent side="left" className="bg-white border-gray-200 w-80">
-                <SheetHeader>
-                  <SheetTitle className="text-gray-900 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">N</div>
-                    NOVA
-                  </SheetTitle>
-                </SheetHeader>
-                <nav className="mt-8 flex flex-col gap-4">
-                  <Link href="/catalog/iphone" onClick={() => setMobileMenuOpen(false)} className="text-lg text-gray-700 hover:text-blue-600 transition-colors py-2 border-b border-gray-100">iPhone</Link>
-                  <Link href="/catalog/macbook" onClick={() => setMobileMenuOpen(false)} className="text-lg text-gray-700 hover:text-blue-600 transition-colors py-2 border-b border-gray-100">MacBook</Link>
-                  <Link href="/catalog/ipad" onClick={() => setMobileMenuOpen(false)} className="text-lg text-gray-700 hover:text-blue-600 transition-colors py-2 border-b border-gray-100">iPad</Link>
-                  <Link href="/catalog/samsung" onClick={() => setMobileMenuOpen(false)} className="text-lg text-gray-700 hover:text-blue-600 transition-colors py-2 border-b border-gray-100">Samsung</Link>
-                  <Link href="/catalog/accessories" onClick={() => setMobileMenuOpen(false)} className="text-lg text-gray-700 hover:text-blue-600 transition-colors py-2 border-b border-gray-100">Аксессуары</Link>
-                  <Link href="/trade-in" onClick={() => setMobileMenuOpen(false)} className="text-lg text-gray-700 hover:text-blue-600 transition-colors py-2 border-b border-gray-100">Trade-in</Link>
-                  <div className="pt-4 space-y-2 text-sm text-gray-500">
-                    <p>
-                      <a href={`tel:${storeInfo.phoneTel}`} className="hover:text-blue-600">
-                        {storeInfo.phoneDisplay}
-                      </a>
-                    </p>
-                    <p>{storeInfo.hours}</p>
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
-
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">N</div>
-              <span className="text-gray-900 text-xl font-bold tracking-tight hidden sm:inline">NOVA</span>
-            </Link>
-
-            {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center gap-8">
-              <div className="relative group">
-                <button type="button" className="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                  Apple <ChevronDown className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="relative group">
-                <button type="button" className="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                  Samsung <ChevronDown className="w-4 h-4" />
-                </button>
-              </div>
-              <Link href="/catalog/accessories" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Аксессуары</Link>
-              <Link href="/trade-in" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Trade-in</Link>
-            </nav>
-
-            {/* Actions */}
-            <div className="flex items-center gap-2 sm:gap-4">
-              {/* Search Dialog */}
-              <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-                <DialogTrigger asChild>
-                  <button type="button" className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all">
-                    <Search className="w-5 h-5" />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="bg-white border-gray-200 max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle className="text-gray-900">Поиск товаров</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Input
-                        type="text"
-                        placeholder="Введите название товара..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-gray-50 border-gray-200 text-gray-900 pl-10 py-6 text-lg rounded-xl"
-                        autoFocus
-                      />
-                    </div>
-                    {searchQuery && (
-                      <ScrollArea className="h-[300px]">
-                        <div className="space-y-2">
-                          {filteredProducts.length > 0 ? (
-                            filteredProducts.map(product => (
-                              <Link
-                                key={product.id}
-                                href={`/product/${product.slug}`}
-                                onClick={() => setSearchOpen(false)}
-                                className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors"
-                              >
-                                <SafeImage src={product.image} alt={product.name} className="w-16 h-16 object-contain bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-2" />
-                                <div className="flex-1">
-                                  <p className="text-blue-600 text-sm font-medium">{product.brand}</p>
-                                  <p className="text-gray-900 font-medium">{product.name}</p>
-                                  <p className="text-blue-600 font-bold">{product.price.toLocaleString("ru-RU")} ₽</p>
-                                </div>
-                              </Link>
-                            ))
-                          ) : (
-                            <p className="text-gray-400 text-center py-8">Ничего не найдено</p>
-                          )}
-                        </div>
-                      </ScrollArea>
-                    )}
-                  </div>
-                </DialogContent>
-              </Dialog>
-
-              <button type="button" className="hidden sm:flex p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all">
-                <Heart className="w-5 h-5" />
-              </button>
-
-              <CartButton />
-
-              <button type="button" className="hidden sm:flex p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all">
-                <User className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden py-16 md:py-32">
@@ -276,9 +106,11 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-xl shadow-blue-200">
-                Перейти в каталог
-                <ArrowRight className="w-5 h-5 ml-2" />
+              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-xl shadow-blue-200" asChild>
+                <Link href="/catalog" className="inline-flex items-center justify-center gap-2">
+                  Перейти в каталог
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
               </Button>
               <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 px-8 py-6 text-lg rounded-xl bg-white">
                 Trade-in со скидкой
@@ -401,7 +233,7 @@ export default function Home() {
       <AnimatedSection delay={600}>
         <section className="py-12 md:py-16 bg-white/50">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-10 md:mb-12">Почему выбирают NOVA</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-10 md:mb-12">Почему выбирают {brandName}</h2>
 
             <div className="grid md:grid-cols-3 gap-4 md:gap-6">
               {[
@@ -451,8 +283,8 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-10 mb-12">
             <div className="col-span-2 md:col-span-1">
               <Link href="/" className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">N</div>
-                <span className="text-gray-900 text-xl font-bold tracking-tight">NOVA</span>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">{brandLetter}</div>
+                <span className="text-gray-900 text-xl font-bold tracking-tight">{brandName}</span>
               </Link>
               <p className="text-gray-600 text-sm">Премиальная техника Apple и Samsung с гарантией</p>
             </div>
@@ -460,8 +292,18 @@ export default function Home() {
             <div>
               <h4 className="text-gray-900 font-bold mb-4">Каталог</h4>
               <ul className="space-y-2">
-                {["iPhone", "MacBook", "iPad", "Samsung", "Аксессуары"].map(item => (
-                  <li key={item}><Link href={`/catalog/${item.toLowerCase()}`} className="text-gray-600 hover:text-blue-600 transition-colors text-sm">{item}</Link></li>
+                {[
+                  { label: "iPhone", href: "/catalog/iphone" },
+                  { label: "MacBook", href: "/catalog/macbook" },
+                  { label: "iPad", href: "/catalog/ipad" },
+                  { label: "Samsung", href: "/catalog/samsung" },
+                  { label: "Аксессуары", href: "/catalog/accessories" },
+                ].map(({ label, href }) => (
+                  <li key={label}>
+                    <Link href={href} className="text-gray-600 hover:text-blue-600 transition-colors text-sm">
+                      {label}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -508,7 +350,7 @@ export default function Home() {
               {storeLegalLine()}
             </p>
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <p className="text-gray-500 text-sm">© {new Date().getFullYear()} NOVA Store. Все права защищены.</p>
+              <p className="text-gray-500 text-sm">© {new Date().getFullYear()} {brandName}. Все права защищены.</p>
               <div className="flex items-center gap-4 text-gray-500 text-sm">
                 <span>Visa</span>
                 <span>Mastercard</span>

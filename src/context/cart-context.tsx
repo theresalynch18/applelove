@@ -19,7 +19,8 @@ export interface CartItem {
   quantity: number;
 }
 
-const STORAGE_KEY = "nova-store-cart";
+const STORAGE_KEY = "applelove-store-cart";
+const LEGACY_STORAGE_KEY = "nova-store-cart";
 
 type CartContextValue = {
   cart: CartItem[];
@@ -41,7 +42,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      let raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (raw) {
+          localStorage.setItem(STORAGE_KEY, raw);
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+        }
+      }
       if (raw) {
         const parsed = JSON.parse(raw) as unknown;
         if (Array.isArray(parsed)) {

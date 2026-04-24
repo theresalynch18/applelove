@@ -18,9 +18,9 @@ import {
   Share2,
 } from "lucide-react";
 import { getProductBySlug, products } from "@/lib/products";
-import { CartButton } from "@/components/cart-button";
 import { SafeImage } from "@/components/safe-image";
 import { useCart } from "@/context/cart-context";
+import { SiteHeader } from "@/components/site-header";
 
 export default function ProductPage() {
   const params = useParams();
@@ -33,12 +33,15 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Товар не найден</h1>
-          <Button onClick={() => router.push("/")} className="bg-gradient-to-r from-blue-600 to-purple-600">
-            На главную
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <SiteHeader />
+        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">Товар не найден</h1>
+            <Button onClick={() => router.push("/")} className="bg-gradient-to-r from-blue-600 to-purple-600">
+              На главную
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -50,21 +53,7 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
-                N
-              </div>
-              <span className="text-gray-800 text-xl font-bold tracking-tight">NOVA</span>
-            </Link>
-
-            <CartButton />
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Breadcrumbs */}
       <div className="container mx-auto px-4 py-6">
